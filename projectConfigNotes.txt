@@ -1,0 +1,11 @@
+RIP Configuration on the routers:
+- statically set the interfaces to be whatever you need, e.g.,
+	set interfaces ethernet eth0 vif xx address xxx.xxx.xx.xx/xx
+
+- commit / save / exit
+- back to configure, set protocols rip interface eth0.xx for each subnet
+- commit / save / exit
+- in case that has to be redistributed, 
+	configure + set protocols rip redistribute static
+	
+video Armin, ~1h10 timestamp. Configuration for router to connect to the internet. NAT and all. It works.
