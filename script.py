@@ -27,6 +27,27 @@ def os_detection():
                 print("The packet's TTL is " + str(res.getlayer(IP).ttl))
                 print("OS is Windows")
 
+def port_scanner():
+
+    print("Insert target IP address: ")
+    target = input()
+
+    src_port = RandShort()
+    ports_list = [20, 21, 22, 23, 25, 50, 51, 53, 67, 68, 69, 80, 110, 119, 123, 139, 143, 161, 162, 289, 443, 989, 990, 3389]
+
+    for port in ports_list:
+
+        tcp_connect_scan_resp = sr1(IP(dst = target)/TCP(sport = src_port, dport = port, flags = "S"), timeout=2, verbose = 0)
+
+        if(type(tcp_connect_scan_resp) is None):
+            pass
+        elif(tcp_connect_scan_resp.haslayer(TCP)):
+            if(tcp_connect_scan_resp.getlayer(TCP).flags == 0x12):
+                send_rst = sr(IP(dst = target)/TCP(sport = src_port, dport = port, flags = "AR"), timeout=2, verbose = 0)
+                print ("Port " + str(port) + " is open")
+        elif (tcp_connect_scan_resp.getlayer(TCP).flags == 0x14):
+            pass
+
 def choose_recon():
     #clear the screen
     os.system("clear")
@@ -46,7 +67,7 @@ def choose_recon():
     print("3. Ip Spoof Testing")
     print("4. Active Hosts in Network")
     print("5. Exit")
-    print("-----------------------------------")
+    print("------------------------------------------------------------------------------------")
     choice = input("Enter your choice: ")
     if choice == "1":
         os_detection()
@@ -81,8 +102,27 @@ def choose_dos():
     print("3. ICMP Flood")
     print("4. Spoofed ICMP Flood")
     print("4. UDP Flood")
+    print("5. Exit")                                            
+    print("-----------------------------------------------------------------------------------------")
+
+def choose_exploit():
+    os.system("clear")                                   
+    print("----------------------------------------------")
+    string = ''' ________  _ ____  _     ____  _  _____  ____ 
+/  __/\\  \///  __\\/ \\   /  _ \\/ \\/__ __\\/ ___\\
+|  \\   \\  / |  \\/|| |   | / \\|| |  / \\  |    \\
+|  /_  /  \\ |  __/| |_/\| \\_/|| |  | |  \\___ |
+\\____\\/__/\\\\\\_/   \\____/\\____/\\_/  \\_/  \\____/'''
+
+    print(string)
+    print("----------------------------------------------")
+    print("\n")
+    print("Choose an exploit.")
+
+
 
 def main():
+    os.system("clear")
     while True:
         print("-----------------------------------")
         print("Welcome. Choose a category of attacks.")
