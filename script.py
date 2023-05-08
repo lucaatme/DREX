@@ -39,7 +39,8 @@ def port_scanner():
     target = input()
 
     src_port = RandShort()
-    ports_list = [20, 21, 22, 23, 25, 50, 51, 53, 67, 68, 69, 80, 110, 119, 123, 139, 143, 161, 162, 289, 443, 989, 990, 3389]
+    ports_list = [20, 21, 22, 23, 25, 53, 69, 80, 110, 143, 161, 162, 443, 989, 990]
+    #20: FTP, 21: FTP, 22: SSH, 23: Telnet, 25: SMTP, 53: DNS, 69: TFTP, 80: HTTP, 110: POP3, 143: IMAP, 161: SNMP, 162: SNMP, 443: HTTPS, 989: FTPS, 990: FTPS
 
     for port in ports_list:
 
