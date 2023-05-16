@@ -394,7 +394,7 @@ def choose_exploit():
     elif choice == "3":
         sql_injection()
         
-    elif choice == "3":
+    elif choice == "4":
         print("Back to main menu.")
         os.system("clear")
         main()
