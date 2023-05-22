@@ -5,7 +5,6 @@ import sys
 import urllib.request
 from ipaddress import IPv4Network
 from tqdm import tqdm
-#from netfilterqueue import NetfilterQueue
 import requests
 
 #RECONNAISSANCE ATTACKS
