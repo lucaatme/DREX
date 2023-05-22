@@ -18,7 +18,6 @@ def os_detection():
 \____/\____/  \____/\____\  \_/  \____\\____/  \_/  \_/\____/\_/  \|
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()
     packet = IP(dst = target) / TCP(flags = "")
@@ -53,7 +52,6 @@ def port_scanner():
 \_/   \____/\_/\_\  \_/    \____/\____/\_/ \|\_/  \|\_/  \|\____\\_/\_\
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()
 
@@ -85,8 +83,6 @@ def ip_sweep():
 \_/ \|\____/  \_/  \_/\__/  \____\  \_/ \|\____/\____/  \_/  \____/  \_/\_/  \|  \_/  \|\____\  \_/  \_/  \|\____/\_/\_\\_|\_\
 '''
 
-    print(string)
-
     # Defines network to analyze
     print("Insert the network address to scan (The format should be xxx.xxx.xxx.xxx/xx):")
     network = input()
@@ -116,7 +112,6 @@ def ip_spoof():
 \_/\_/     \____/\_/   \____/\____/\_/       \_/  \____\\____/  \_/  \_/\_/  \|\____\
 '''
 
-    print(string)
     # Simple version
     print("Insert target IP address: ")
     target = input()
@@ -145,7 +140,6 @@ def syn_flood():
 \____//_/   \_/  \|  \_/   \____/\____/\____/\____/
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()
     print("Attacking " + target + " with SYN flood.")
@@ -175,7 +169,6 @@ def spoofed_syn_flood():
 \____/\_/   \____/\____/\_/   \____\\____/  \____//_/   \_/  \|  \_/   \____/\____/\____/\____/
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()
     print("Attacking " + target + " with SPOOFED SYN flood.")
@@ -210,7 +203,6 @@ def icmp_flood():
 \_/\____/\_/  \|\_/     \_/   \____/\____/\____/\____/
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()    
     print("Attacking " + target + " with ICMP flood.")
@@ -239,7 +231,6 @@ def spoofed_icmp_flood():
 \____/\_/   \____/\____/\_/   \____\\____/  \_/\____/\_/  \|\_/     \_/   \____/\____/\____/\____/
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()
     print("Attacking " + target + " with ICMP flood.")
@@ -275,7 +266,6 @@ def spoofed_udp_flood():
 \____/\_/   \____/\____/\_/   \____\\____/  \____/\____/\_/     \_/   \____/\____/\____/\____/
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()
 
@@ -313,7 +303,6 @@ def ping_of_death():
 \_/   \_/\_/  \|\____\  \____/\_/     \____/\____\\_/ \|  \_/  \_/ \|
 '''
 
-    print(string)
     print("Insert target IP address: ")
     target = input()
 
@@ -334,7 +323,6 @@ def dns_amplification():
 \____/\_/  \|\____/  \_/ \|\_/  \|\_/   \____/\_/\_/   \_/\____/\_/ \|  \_/  \_/\____/\_/  \|
 '''
 
-    print(string)
     print("Insert the target IP address: ")
     target = input()
 
@@ -356,9 +344,6 @@ def sql_injection():
 \___ || \_\|| |_/\  | || | \||/\_| ||  /_ |  \_   | |  | || \_/|| | \||
 \____/\____\\____/  \_/\_/  \|\____/\____\\____/  \_/  \_/\____/\_/  \|
 '''
-
-    print(string)
-
 
     print("Insert the website IP:")
     target = input()
