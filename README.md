@@ -1,4 +1,6 @@
-# MSN-Final-Project
+# DREX: Denial of service, Reconnaissance and Exploits eXecutable
+
+## Project for the Information Security Course @ University of Padua, A.Y. 2022/2023  
 
 We provide a detailed documentation of the project in the ```doc``` folder. The documentation is written in Microsoft Word and not in LaTeX, due to mandatory conditions of the Course. The documentation is also available in ```pdf``` format.
 ## Network Implementation Plan
