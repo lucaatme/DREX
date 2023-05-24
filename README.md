@@ -14,7 +14,7 @@ The mandatory network design mustv follow the following requirements:
 ### Project Implementation
 The actual implementation of the network is shown in the following diagram:
 
-![Network Topology](Figures/Net_Topology.jpg)
+![Network Topology](figures/Net_Topology.jpg)
 
 The segments of the teworks are defined as follows:
 
