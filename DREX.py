@@ -1,8 +1,6 @@
-import queue
 from scapy.all import *
 import os
 import sys
-import urllib.request
 from ipaddress import IPv4Network
 from tqdm import tqdm
 import requests
