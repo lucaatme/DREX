@@ -37,6 +37,8 @@ The mandatory network design mustv follow the following requirements:
 **NUM_RECON_ATTACKS_MIN**: 2  
 **EXTRA_ATTACKS**: 1 DNS Attack 
 
+We called the script **DREX**: **D**enial of service, **R**econ and **E**xploits e**X**ecutor. The code is visible in the Python script DREX.py
+
 ### Project Implementation
 The actual implementation of the attacks is the following:
 
